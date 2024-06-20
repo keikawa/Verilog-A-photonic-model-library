@@ -1,0 +1,32 @@
+`include "constants.vams"
+`include "disciplines.vams"
+
+// Voltage-dependent nonlinear capacitor for pn junction
+
+module NonlinearCapacitor(p, n);
+    inout p, n;
+    electrical p, n;
+
+	parameter real cap_coef6 = 3.271E-15;
+	parameter real cap_coef5 = 1.136E-13;
+	parameter real cap_coef4 = 1.584E-12;
+	parameter real cap_coef3 = 1.150E-11;
+	parameter real cap_coef2 = 4.790E-11;
+	parameter real cap_coef1 = 1.262E-10;
+	parameter real cap_coef0 = 3.400E-10;
+	real cap; // [F/m]
+	real q; // [C]
+	parameter real length = 50e-6; // [m]
+
+	analog begin
+		cap =	cap_coef6 * V(p, n) * V(p, n) * V(p, n) * V(p, n) * V(p, n) * V(p, n) +
+				cap_coef5 * V(p, n) * V(p, n) * V(p, n) * V(p, n) * V(p, n) +
+				cap_coef4 * V(p, n) * V(p, n) * V(p, n) * V(p, n) +
+				cap_coef3 * V(p, n) * V(p, n) * V(p, n) +
+				cap_coef2 * V(p, n) * V(p, n) +
+            	cap_coef1 * V(p, n) +
+                cap_coef0;
+		q = length * cap * V(p, n);
+		I(p, n) <+ ddt(q); // Don't use I(p, n) <+ cap * ddt(V(p, n)). It does not converged.
+    end
+endmodule

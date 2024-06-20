@@ -1,0 +1,27 @@
+`include "constants.vams"
+`include "disciplines.vams"
+
+// Continuous wave laser source
+
+module CwLaser(out);
+    output [0:1] out;
+    optical [0:1] pol, out;
+
+    parameter real wavelength = 1550; // [nm]
+    parameter real power = 10; // [dBm]
+    real laser_freq = `P_C / wavelength / 1e-9; // [Hz]
+    real amplitude; // [V/m]
+
+    // Convert polar coordinates to Cartesian coordinates
+    PolToCart PolToCart1(pol, out);
+
+    analog begin
+        @(initial_step) begin
+            // Calculate the electrical amplitude
+            amplitude = sqrt(pow(10, power / 10) / 1000);
+        end
+
+        OptE(pol[0]) <+ amplitude; // Amplitide
+        OptE(pol[1]) <+ 2 * `M_PI * (laser_freq - `F_REF) * $abstime; // Phase
+    end
+endmodule

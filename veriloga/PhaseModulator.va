@@ -1,0 +1,37 @@
+`include "constants.vams"
+`include "disciplines.vams"
+
+// Phase modulator
+
+module PhaseModulator(opt_in, opt_out, ele_in);
+    input [0:1] opt_in; // Optical input
+    input ele_in; // Electrical input
+    output [0:1] opt_out; // Optical output
+    optical [0:1] opt_in, opt_out, transfer_pol, transfer, out_tmp;
+    electrical ele_in;
+
+    parameter real length = 100e-6; // [m]
+    parameter real equivalentIndex = 2.31; // at 0-V bias
+    parameter real groupIndex = 4.34;
+    parameter real loss = 2.0; // [dB/cm] at 0-V bias
+
+    real n0 = equivalentIndex;
+    parameter real n1 = 0.0002;
+    real a0 = 23.0258509299404568 * loss;
+    parameter real a1 = 10;
+    
+    PolToCart PolToCart1(transfer_pol, transfer);
+    CartMul CartMul1(transfer, opt_in, out_tmp);
+
+    real polynomialEquivalentIndex;
+    real polynomialAlpha;
+
+    analog begin
+        polynomialEquivalentIndex = n0 + n1 * V(ele_in);
+        polynomialAlpha = a0 + a1 * V(ele_in);
+        OptE(transfer_pol[0]) <+ exp(- polynomialAlpha / 2 * length); // Propagation loss
+        OptE(transfer_pol[1]) <+ (- length * polynomialEquivalentIndex * 2 * `M_PI * `F_REF / `P_C) % (2 * `M_PI); // Phase rotation
+        OptE(opt_out[0]) <+ absdelay(OptE(out_tmp[0]), length*groupIndex / `P_C); // Group delay
+        OptE(opt_out[1]) <+ absdelay(OptE(out_tmp[1]), length*groupIndex / `P_C); // Group delay
+    end
+endmodule

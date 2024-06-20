@@ -1,0 +1,18 @@
+`include "constants.vams"
+`include "disciplines.vams"
+
+// Photo detector
+
+module PhotoDetector(opt_in, ele_out);
+    input [0:1] opt_in;
+    output ele_out;
+    optical [0:1] opt_in;
+    electrical ele_out;
+
+    parameter real responsivity = 1.0; // [A/W]
+    parameter real bandwidth = 30e9; // [Hz]
+
+    analog begin
+        I(ele_out) <+ laplace_nd((- responsivity * (pow(OptE(opt_in[0]), 2) + pow(OptE(opt_in[1]), 2))), {1}, {1, 1 / bandwidth / 2 / `M_PI});
+    end
+endmodule

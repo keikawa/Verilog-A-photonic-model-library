@@ -1,0 +1,17 @@
+`include "constants.vams"
+`include "disciplines.vams"
+
+// Optical two-by-one combiner
+
+module TwoOneCombiner(in1, in2, out);
+    input [0:1] in1, in2;
+    output [0:1] out;
+    optical [0:1] in1, in2, out;
+
+    parameter real kappa = 0.5; // Power ratio
+    
+    analog begin
+        OptE(out[0]) <+ OptE(in1[0]) * sqrt(kappa) + OptE(in2[0]) * sqrt(1 - kappa);
+        OptE(out[1]) <+ OptE(in1[1]) * sqrt(kappa) + OptE(in2[1]) * sqrt(1 - kappa);
+    end
+endmodule
