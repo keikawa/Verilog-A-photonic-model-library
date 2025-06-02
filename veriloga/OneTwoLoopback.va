@@ -1,0 +1,20 @@
+`include "constants.vams"
+`include "disciplines.vams"
+
+// Optical one-by-two coupler with input and output ports defined to loopback
+
+module OneTwoLoopback(one, two1, two2);
+    inout [0:3] one, two1, two2; // one[0:1]:input, one[2:3]:output, two1[0:1]:output, two1[2:3]:input, two2[0:1]:input, two2[2:3]:output
+    optical [0:3] one, two1, two2;
+    
+    parameter real kappa = 0.5; // Power ratio
+
+    analog begin
+        OptE(two1[0]) <+ sqrt(kappa) * OptE(one[0]);
+        OptE(two1[1]) <+ sqrt(kappa) * OptE(one[1]);
+        OptE(two2[2]) <+ sqrt(1 - kappa) * OptE(one[0]);
+        OptE(two2[3]) <+ sqrt(1 - kappa) * OptE(one[1]);
+        OptE(one[2]) <+ OptE(two1[2]) * sqrt(kappa) + OptE(two2[0]) * sqrt(1 - kappa);
+        OptE(one[3]) <+ OptE(two1[3]) * sqrt(kappa) + OptE(two2[1]) * sqrt(1 - kappa);
+    end
+endmodule

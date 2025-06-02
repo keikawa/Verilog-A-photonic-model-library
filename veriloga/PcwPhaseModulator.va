@@ -1,0 +1,46 @@
+`include "constants.vams"
+`include "disciplines.vams"
+
+// PCW phase modulator
+
+module PcwPhaseModulator(opt_in, opt_out, ele_in);
+    inout [0:3] opt_in, opt_out; // Optical input and output
+    input ele_in; // Electrical input
+    optical [0:3] opt_in, opt_out, transfer_pol, transfer, out_tmp;
+    optical [0:1] fwd, bwd, transfer_pol, transfer;
+    electrical ele_in;
+
+    parameter real length = 100e-6; // [m]
+    parameter real equivalentIndex = 2.31; // at 0-V bias
+    parameter real groupIndex = 20;
+    parameter real refGroupIndex = 20;
+    parameter real loss = 2.0; // [dB/cm] at 0-V bias
+
+    real n0 = equivalentIndex;
+    parameter real n1 = 0.0002;
+    real a0 = 23.0258509299404568 * loss;
+    parameter real a1 = 10;
+    
+    Polar2Cartesian Polar2Cartesian1(transfer_pol, transfer);
+    CartesianMultiplier CartesianMultiplier1(transfer, opt_in[0:1], fwd);
+    CartesianMultiplier CartesianMultiplier2(transfer, opt_out[2:3], bwd);
+
+    real polynomialEquivalentIndex;
+    real polynomialAlpha;
+
+    analog begin
+        // Voltage dependency
+        polynomialEquivalentIndex = n0 + n1 * groupIndex / refGroupIndex * V(ele_in); // Slow-light enhancement
+        polynomialAlpha = a0 + a1 * V(ele_in);
+
+        // Transfer function
+        OptE(transfer_pol[0]) <+ exp(- polynomialAlpha / 2 * length); // Propagation loss
+        OptE(transfer_pol[1]) <+ (- length * polynomialEquivalentIndex * 2 * `M_PI * `F_REF / `P_C) % (2 * `M_PI); // Phase rotation
+
+        // Output
+        OptE(opt_out[0]) <+ absdelay(OptE(fwd[0]), length*groupIndex / `P_C);
+        OptE(opt_out[1]) <+ absdelay(OptE(fwd[1]), length*groupIndex / `P_C);
+        OptE(opt_in[2]) <+ absdelay(OptE(bwd[0]), length*groupIndex / `P_C);
+        OptE(opt_in[3]) <+ absdelay(OptE(bwd[1]), length*groupIndex / `P_C);
+    end
+endmodule

@@ -1,0 +1,21 @@
+`include "constants.vams"
+`include "disciplines.vams"
+
+// Optical attenuator
+
+module Attenuator(in, out);
+    inout [0:3] in, out;
+    optical [0:3] in, out;
+    optical [0:1] transfer_pol, transfer;
+
+    parameter real attenuation = 3.0; // [dB]
+
+    Polar2Cartesian Polar2Cartesian1(transfer_pol, transfer);
+    CartesianMultiplier CartesianMultiplier1(transfer, in[0:1], out[0:1]);
+    CartesianMultiplier CartesianMultiplier2(transfer, out[2:3], in[2:3]);
+
+    analog begin
+        OptE(transfer_pol[0]) <+ pow(10, - attenuation / 20);
+        OptE(transfer_pol[1]) <+ 0;
+    end
+endmodule

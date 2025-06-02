@@ -1,0 +1,14 @@
+`include "constants.vams"
+`include "disciplines.vams"
+
+// Photo detector
+
+module Terminator(in);
+    input [0:3] in;
+    optical [0:3] in;
+
+    analog begin
+        OptE(in[2]) <+ 0;
+        OptE(in[3]) <+ 0;
+    end
+endmodule

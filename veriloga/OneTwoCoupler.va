@@ -1,0 +1,23 @@
+`include "constants.vams"
+`include "disciplines.vams"
+
+// Optical one-by-two splitter
+
+module OneTwoCoupler(one, two1, two2);
+    inout [0:3] one, two1, two2;
+    optical [0:3] one, two1, two2;
+    
+    parameter real kappa = 0.5; // Power ratio
+    parameter real reflectionOne = 0.1; // Reflection coefficient (range 0 to 1)
+    parameter real reflectionTwo1 = 0.1; // Reflection coefficient (range 0 to 1)
+    parameter real reflectionTwo2 = 0.1; // Reflection coefficient (range 0 to 1)
+
+    analog begin
+        OptE(two1[0]) <+ sqrt(kappa) * OptE(one[0]) + reflectionTwo1 * OptE(two1[2]);
+        OptE(two1[1]) <+ sqrt(kappa) * OptE(one[1]) + reflectionTwo1 * OptE(two1[3]);
+        OptE(two2[0]) <+ sqrt(1 - kappa) * OptE(one[0]) + reflectionTwo2 * OptE(two2[2]);;
+        OptE(two2[1]) <+ sqrt(1 - kappa) * OptE(one[1]) + reflectionTwo2 * OptE(two2[3]);;
+        OptE(one[2]) <+ OptE(two1[2]) * sqrt(kappa) + OptE(two2[2]) * sqrt(1 - kappa) + reflectionOne * OptE(one[0]);
+        OptE(one[3]) <+ OptE(two1[3]) * sqrt(kappa) + OptE(two2[3]) * sqrt(1 - kappa) + reflectionOne * OptE(one[1]);
+    end
+endmodule

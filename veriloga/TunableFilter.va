@@ -1,0 +1,36 @@
+`include "constants.vams"
+`include "disciplines.vams"
+
+module TunableFilter(in, out);
+    inout [0:3] in, out;
+    optical [0:3] in, out, in_tmp, out_tmp;
+    optical [0:1] osc1, osc2;
+
+    parameter real wavelength = 1551; // [nm]
+    real center_freq = `P_C / wavelength / 1e-9; // [Hz]
+
+    // Reference frequency conversion
+    CartesianMultiplier CartesianMultiplier1(in[0:1], osc1, in_tmp[0:1]);
+    CartesianMultiplier CartesianMultiplier2(out_tmp[0:1], osc2, out[0:1]);
+
+    CartesianMultiplier CartesianMultiplier3(out[2:3], osc1, out_tmp[2:3]);
+    CartesianMultiplier CartesianMultiplier4(in_tmp[2:3], osc2, in[2:3]);
+
+    analog begin
+	    // delta=2nm
+	    OptE(out_tmp[0]) <+ laplace_nd(OptE(in_tmp[0]), {2.347141585877207e+71,0,0,0,0,0,0}, {2.347141585877208e+71,1.154657487839621e+60,2.840122475453116e+48,4.428868818445329e+36,4.604233134433859e+24,3.034545479782387e+12,1});
+	    OptE(out_tmp[1]) <+ laplace_nd(OptE(in_tmp[1]), {2.347141585877207e+71,0,0,0,0,0,0}, {2.347141585877208e+71,1.154657487839621e+60,2.840122475453116e+48,4.428868818445329e+36,4.604233134433859e+24,3.034545479782387e+12,1});
+	    OptE(in_tmp[2]) <+ laplace_nd(OptE(out_tmp[2]), {2.347141585877207e+71,0,0,0,0,0,0}, {2.347141585877208e+71,1.154657487839621e+60,2.840122475453116e+48,4.428868818445329e+36,4.604233134433859e+24,3.034545479782387e+12,1});
+	    OptE(in_tmp[3]) <+ laplace_nd(OptE(out_tmp[3]), {2.347141585877207e+71,0,0,0,0,0,0}, {2.347141585877208e+71,1.154657487839621e+60,2.840122475453116e+48,4.428868818445329e+36,4.604233134433859e+24,3.034545479782387e+12,1});
+
+	    // delta=1nm
+	    //OptE(out_tmp[0]) <+ laplace_nd(OptE(in_tmp[0]), {3.644573034720866e+69,0,0,0,0,0,0}, {3.644573034720873e+69,3.589571850358176e+58,1.767700351472123e+47,5.518823456961144e+35,1.148664226329986e+24,1.515694049820073e+12,1});
+	    //OptE(out_tmp[1]) <+ laplace_nd(OptE(in_tmp[1]), {3.644573034720866e+69,0,0,0,0,0,0}, {3.644573034720873e+69,3.589571850358176e+58,1.767700351472123e+47,5.518823456961144e+35,1.148664226329986e+24,1.515694049820073e+12,1});
+
+        // Local oscillation for the reference frequency converison
+        OptE(osc1[0]) <+ cos(-2 * `M_PI * (center_freq - `F_REF) * $abstime);
+        OptE(osc1[1]) <+ sin(-2 * `M_PI * (center_freq - `F_REF) * $abstime);
+        OptE(osc2[0]) <+ cos(2 * `M_PI * (center_freq - `F_REF) * $abstime);
+        OptE(osc2[1]) <+ sin(2 * `M_PI * (center_freq - `F_REF) * $abstime);
+    end
+endmodule

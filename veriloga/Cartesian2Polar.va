@@ -1,0 +1,15 @@
+`include "constants.vams"
+`include "disciplines.vams"
+
+// Convert Cartesian coordinates to polar coordinates
+
+module Cartesian2Polar(cart, pol);
+    input [0:1] cart; // cart[0] is real part, and cart[1] is imaginary part
+    output [0:1] pol; // pol[0] is amplitude, and pol[1] is phase
+    optical [0:1] cart, pol;
+
+    analog begin
+        OptE(pol[0]) <+ sqrt(pow(OptE(cart[0]), 2) + pow(OptE(cart[1]), 2)); // Amplitude
+        OptE(pol[1]) <+ atan2(OptE(cart[1]), OptE(cart[0])); // Phase
+    end
+endmodule

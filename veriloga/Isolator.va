@@ -1,0 +1,25 @@
+`include "constants.vams"
+`include "disciplines.vams"
+
+// Optical isolator
+
+module Isolator(in, out);
+    inout [0:3] in, out;
+    optical [0:3] in, out;
+    optical [0:1] transfer_pol, transfer;
+
+    parameter real isolation = 20; // [dB]
+
+    Polar2Cartesian Polar2Cartesian1(transfer_pol, transfer);
+    CartesianMultiplier CartesianMultiplier1(transfer, out[2:3], in[2:3]);
+
+    analog begin
+        // Transfter function
+        OptE(transfer_pol[0]) <+ pow(10, - isolation / 20);
+        OptE(transfer_pol[1]) <+ 0;
+
+        // Forward propagation
+        OptE(out[0]) <+ OptE(in[0]);
+        OptE(out[1]) <+ OptE(in[1]);
+    end
+endmodule
