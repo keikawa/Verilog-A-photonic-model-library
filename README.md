@@ -1,8 +1,10 @@
-# photonic_model_library
+# Verilog-A-photonic_model_library
 
 ## Overview
 
 This repository contains photonic device model libraries and sample testbenches for electronics and photonics co-design. The models are based on the interoperable Verilog-A language and can be imported into standard electronic circuit simulators. The sample testbenches are currently provided as a Keysight Advanced Design System (ADS) workspace, with potential support for other simulators in future releases.
+
+This work builds on our recent study (K.Kawahara and T.Baba, [arXiv:2410.02282](https://arxiv.org/abs/2410.02282)), which has been accepted for publication in IEEE Journal of Microwaves.
 
 ---
 
@@ -175,7 +177,7 @@ GNU General Public License v3.0 (GPL-3.0).
 - **Affiliation**: Yokohama National University (now with Institute of Science Tokyo)
 - **Email**: keisuke [at] ieee.org
 
-This work was conducted at the [Baba Laboratory, Yokohama National University](https://baba-lab.ynu.ac.jp/babalabe.htm).
+This work was conducted at the [Baba Laboratory](https://baba-lab.ynu.ac.jp/babalabe.htm), Yokohama National University.
 
 ## Acknowledgment
 
