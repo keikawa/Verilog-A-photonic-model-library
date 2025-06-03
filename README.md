@@ -4,12 +4,13 @@
 
 This repository contains photonic device model libraries and sample testbenches for electronics and photonics co-design. This model library is designed to capture key device behaviors including optical loss, back reflection, nonlinearity, high-frequency response, and noise characteristics. The models are based on the interoperable Verilog-A language and can be imported into standard electronic circuit simulators. The sample testbenches are currently provided as a Keysight Advanced Design System (ADS) workspace, with potential support for other simulators in future releases.
 
-![Screenshot 2024-05-02 194656](https://github.com/user-attachments/assets/c8fd176f-89b7-4f70-880e-da73becff145)
-![Screenshot 2024-04-10 121612](https://github.com/user-attachments/assets/f2a64d39-c975-4a06-94f1-7b426718e6af)
-![Screenshot 2024-04-09 1819592](https://github.com/user-attachments/assets/2e759798-76fa-4bcd-8742-ffe7b61a3af5)
-
-
 This work builds on our recent study (K.Kawahara and T.Baba, [arXiv:2410.02282](https://arxiv.org/abs/2410.02282)), which has been accepted for publication in IEEE Journal of Microwaves.
+
+## Screenshot
+
+<img src="https://github.com/user-attachments/assets/380ea814-c199-421b-91e9-62ffc9a934da" width="60%">
+<img src="https://github.com/user-attachments/assets/b66bc3ff-87c8-449d-b53e-d2d84b3d6078" width="60%">
+<img src="https://github.com/user-attachments/assets/2e759798-76fa-4bcd-8742-ffe7b61a3af5" width="60%">
 
 ---
 
