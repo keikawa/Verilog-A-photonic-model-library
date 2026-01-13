@@ -1,4 +1,4 @@
-# Verilog-A-photonic_model_library
+# Verilog-A Photonic Model Library
 
 ## Overview
 
